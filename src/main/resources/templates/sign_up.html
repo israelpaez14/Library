@@ -1,0 +1,131 @@
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+
+    <div th:replace="layout::header"></div>
+    <link rel="icon" href="images/book.png" type="image/png">
+
+
+</head>
+<body>
+<div class="wrapper">
+
+    <div id="vue-container" class="container">
+
+        <div id="login-row" class="row justify-content-center align-items-center">
+            <div id="login-column" class="col-md-6">
+
+                <div id="login-box" class="col-md-12" style="margin-top: 5vh">
+                    <h1>Sign up</h1>
+                    <input type="hidden" th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username"
+                               placeholder="Enter your username" name="username"
+                               v-model="username"
+                               required>
+                        <small id="emailHelp" class="form-text text-muted">We'll never
+                            share your username with anyone else.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name"
+                               placeholder="Enter your email" name="name"
+                               v-model="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email"
+                               placeholder="Enter your email" name="email"
+                               v-model="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control"
+                               v-model="password1" id="password"
+                               placeholder="Password" name="password">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="password2">Repeat password</label>
+                        <input type="password" class="form-control" id="password2"
+                               placeholder="Password" v-model="password2" name="password2">
+                    </div>
+
+                    <button type="button" class="btn btn-success"
+                            @click="validate">Sign
+                        up
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+<script type="text/javascript">
+
+    Vue.http.headers.common['X-CSRFTOKEN'] = Cookies.get('csrftoken');
+    new Vue({
+        el: '#vue-container',
+        data: {
+            username: "",
+            password1: "",
+            password2: "",
+            email: "",
+            name: ""
+        },
+        mounted: function () {
+
+        },
+        methods: {
+
+
+            validate: function () {
+
+                if((!this.username)||(!this.password1)||(!this.password2)||(!this.email)||(!this.name)){
+                    Swal.fire({
+                        title: 'Hey!',
+                        text: 'All the fields are required',
+                        icon: 'warning',
+                        confirmButtonText: 'Okay'
+                    });
+
+                    return false;
+                }
+
+                if(this.password1!=this.password2) {
+                    Swal.fire({
+                        title: 'Passwords',
+                        text: 'The passwords do not match',
+                        icon: 'warning',
+                        confirmButtonText: 'Got It!'
+                    });
+
+                    return false;
+                }
+
+            },
+
+        }
+    });
+
+</script>
+</html>

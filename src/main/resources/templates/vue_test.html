@@ -1,0 +1,341 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" type="image/png" href="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+    <title>Tablero</title>
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+    <meta name="viewport" content="width=device-width"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.0/animate.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <style>
+        .rounded {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .hover:hover {
+            cursor: pointer;
+        }
+
+        .a {
+            color: white !important;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Bienvenido </a>
+                </div>
+
+            </div>
+        </nav>
+        <div class="content" id="vue-container">
+            <div v-if="searching" class="loading">Loading</div>
+
+            <div class="container-fluid">
+                <div class="card col-lg-12">
+                    <div class="card-body">
+
+                        <h3 class="card-title">Empleados registrados</h3>
+
+                        <button class="btn btn-info" @click="alfabetico" style="margin: 8px">Ver en orden alfabetico
+                        </button>
+                        <button class="btn btn-warning" @click="registro" style="margin: 8px">Ver en orden de registro
+                        </button>
+
+
+                        <label for="filtro">Filtrar por:</label>
+                        <select id="filtro" v-model="filtro">
+                            <option>Numero de empleado</option>
+                            <option>Nombre</option>
+                            <option>Fecha de entrada(YYYY-MM-DD)</option>
+                            <option>Puesto</option>
+                            <option>Departamento</option>
+                            <option>Turno</option>
+                            <option>CURP</option>
+                            <option>Ocupacion Especifica</option>
+                            <option>Plaza</option>
+                            <option>TODOS LOS EMPLEADOS</option>
+                        </select>
+
+
+                        <label for="valor_filtro">Valor:</label>
+                        <input type="text" id="valor_filtro" v-model="valor_filtro">
+                        <button class="btn btn-danger" @click="report=!report" style="margin: 8px">Descargar XLSX
+                        </button>
+
+                        <div v-show="report">
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="numero" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label">
+                                    Numero de empleado
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="nombre" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label">
+                                    Nombre del empleado
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="fecha" type="checkbox" value=""
+                                      >
+                                <label class="form-check-label">
+                                    Fecha Ingreso
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="puesto" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label" >
+                                    Puesto
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="departamento" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label" >
+                                    Departamento
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="turno" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label" >
+                                    Turno
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="curp" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label" >
+                                    CURP
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="ocupacion" type="checkbox" value=""
+                                       >
+                                <label class="form-check-label" >
+                                    Ocupacion
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" v-model="plaza" type="checkbox" value=""
+                                    >
+                                <label class="form-check-label" >
+                                    Plaza
+                                </label>
+                            </div>
+
+
+                            <button type="button" class="btn btn-info" style="margin: 15px" @click="descargarReporte">
+                                Descargar reporte
+                            </button>
+
+                        </div>
+
+
+                        <div class="col-lg-12" v-for="empleado in empleados">
+                            <div class="panel panel-success">
+                                <div class="panel-heading clearfix">
+                                    <div class="panel-title"><h4
+                                            style="alignment: center;margin: auto; text-align: center">
+                                        [[empleado.nombre]]</h4></div>
+                                    <ul class="panel-tool-options">
+
+
+
+                                        <li><a data-rel="collapse"
+                                               :href=""><i
+                                                class="ti-layers-alt"></i> Ver cursos</a></li>
+
+                                        <li style="color: red" class="hover" @click="eliminar(empleado.id)"><i
+                                                class="ti-trash hover" style="color: red"></i> Eliminar
+                                        </li>
+
+                                    </ul>
+                                </div>
+                                <div class="panel-body">
+                                    <p class="col-lg-4"><img :src="empleado.foto" width="70vw" height="70vh"
+                                                             alt="Avatar"
+                                                             class="rounded"></p>
+                                    <p class="col-lg-4"><strong>Numero de empleado: </strong>[[ empleado.id]]</p>
+                                    <p class="col-lg-4"><strong>Puesto: </strong>[[" "+empleado.puesto]]</p>
+                                    <p class="col-lg-4"><strong>Departamento:</strong>[[" "+empleado.departamento]]</p>
+                                    <p class="col-lg-4"><strong>CURP:</strong>[[" "+empleado.curp]]</p>
+                                    <p class="col-lg-4"><strong>Fecha de Ingreso:</strong>[[" "+empleado.fecha_ingreso]]
+                                    </p>
+                                    <p class="col-lg-4"><strong>Plaza:</strong>[[" "+empleado.plaza]]</p>
+                                    <p class="col-lg-4" style="color: green" v-if="empleado.activo">Activo: SI</p>
+                                    <p class="col-lg-4" style="color: red" v-else>Activo: NO</p>
+
+                                    <p class="col-lg-4">
+                                        <small><strong>Turno:</strong>[[" "+empleado.turno]] turno</small>
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script type="text/javascript">
+
+    Vue.http.headers.common['X-CSRFTOKEN'] = Cookies.get('csrftoken');
+    new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#vue-container',
+        data: {
+            empleados: [],
+            searching: false,
+            filtro: "Numero de empleado",
+            valor_filtro: "",
+            report: false,
+            numero: false,
+            nombre: false,
+            fecha: false,
+            puesto: false,
+            departamento: false,
+            turno: false,
+            curp: false,
+            ocupacion: false,
+            plaza: false,
+        },
+        mounted: function () {
+            this.cargarActividades();
+        },
+        methods: {
+            cargarActividades: function () {
+                this.searching = true;
+                this.$http.get("../api/empleados").then(function (response) {
+                    console.log(response.body);
+                    this.empleados = response.body;
+                    this.searching = false;
+                }, function (error) {
+                    console.log(error);
+                    this.searching = false;
+                });
+            },
+            alfabetico: function () {
+                this.searching = true;
+                this.$http.get("../api/empleados?orden=1").then(function (response) {
+                    console.log(response.body);
+                    this.empleados = response.body;
+                    this.searching = false;
+                }, function (error) {
+                    console.log(error);
+                    this.searching = false;
+                });
+            },
+            registro: function () {
+                this.searching = true;
+                this.$http.get("../api/empleados").then(function (response) {
+                    console.log(response.body);
+                    this.empleados = response.body;
+                    this.searching = false;
+                }, function (error) {
+                    console.log(error);
+                    this.searching = false;
+                });
+            },
+            eliminar: function (empleado) {
+                swal({
+                    title: "Estas seguro?",
+                    text: "Una vez eliminado no lo podras recuperar",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.searching = true;
+                            this.$http.delete("../api/empleados/" + empleado + "/").then(function (response) {
+                                console.log(response.body);
+                                swal({
+                                    title: "Listo",
+                                    text: "Empleado eliminado",
+                                    icon: "success",
+                                    button: "OK",
+                                });
+                                this.cargarActividades();
+
+                            }, function (error) {
+                                console.log("Error");
+                                swal({
+                                    title: "Error!",
+                                    text: "Error al eliminar, por favor contacte al administrador",
+                                    icon: "error",
+                                    button: "OK",
+                                });
+                                this.cargarActividades();
+
+                            });
+
+                        } else {
+
+
+                        }
+                    });
+
+            },
+            descargarReporte: function () {
+
+
+                location = "filtro=" + this.filtro + "&valor_filtro=" +
+                    this.valor_filtro + "&nombre=" + this.nombre + "&numero=" + this.numero + "&fecha=" + this.fecha
+                    + "&puesto=" + this.puesto + "&departamento=" + this.departamento + "&turno=" + this.turno + "&curp=" + this.curp
+                    + "&ocupacion=" + this.ocupacion+"&plaza="+this.plaza;
+            }
+        }
+    })
+
+</script>
+
+</html>
