@@ -19,7 +19,7 @@
                 <div id="login-box" class="col-md-12" style="margin-top: 5vh">
                     <h1>Sign up</h1>
                     <input type="hidden" th:name="${_csrf.parameterName}"
-                           th:value="${_csrf.token}"/>
+                           th:value="${_csrf.token}" id="csrf"/>
 
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -82,7 +82,8 @@
 
 <script type="text/javascript">
 
-    Vue.http.headers.common['X-CSRFTOKEN'] = Cookies.get('csrftoken');
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $("#csrf")[0].value;
+    console.log("Token :"+ $("#csrf")[0].value);
     new Vue({
         el: '#vue-container',
         data: {
@@ -100,7 +101,7 @@
 
             validate: function () {
 
-                if((!this.username)||(!this.password1)||(!this.password2)||(!this.email)||(!this.name)){
+                if ((!this.username) || (!this.password1) || (!this.password2) || (!this.email) || (!this.name)) {
                     Swal.fire({
                         title: 'Hey!',
                         text: 'All the fields are required',
@@ -111,7 +112,7 @@
                     return false;
                 }
 
-                if(this.password1!=this.password2) {
+                if (this.password1 != this.password2) {
                     Swal.fire({
                         title: 'Passwords',
                         text: 'The passwords do not match',
@@ -121,9 +122,27 @@
 
                     return false;
                 }
+                this.send();
 
             },
 
+
+            send: function () {
+
+                let data = {
+                    userName: this.username,
+                    password: this.password1,
+                    email: this.email,
+                    name: this.name
+                };
+                console.log(data);
+                this.$http.post("/users/", data).then(function (request) {
+                    console.log(request);
+                }, function (error) {
+                    console.log(error);
+                });
+
+            }
         }
     });
 

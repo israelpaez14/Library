@@ -1,6 +1,7 @@
 package library.demo.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,15 +20,20 @@ public class User {
     private String password;
     @Column(name = "enable", nullable = false)
     private boolean enable;
+
+    @Email
+    @Column
+    private String email;
+
     @OneToMany(mappedBy = "username", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private List<Publication> publications = new ArrayList<>(0);
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>(0);
+
     public User() {
 
     }
@@ -91,6 +97,14 @@ public class User {
 
     public void setPublications(List<Publication> publications) {
         this.publications = publications;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
