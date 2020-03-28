@@ -1,7 +1,15 @@
 package library.demo.models;
 
+import library.demo.models.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
 import javax.validation.constraints.Email;
+import java.lang.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,6 +31,7 @@ public class User {
 
     @Email
     @Column
+   // @UniqueEmailConstraint
     private String email;
 
     @OneToMany(mappedBy = "username", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
