@@ -12,6 +12,8 @@
 <div class="wrapper">
 
     <div id="vue-container" class="container">
+        <div v-if="searching" class="loading">Loading</div>
+
 
         <div id="login-row" class="row justify-content-center align-items-center">
             <div id="login-column" class="col-md-6">
@@ -83,7 +85,7 @@
 <script type="text/javascript">
 
     Vue.http.headers.common['X-CSRF-TOKEN'] = $("#csrf")[0].value;
-    console.log("Token :"+ $("#csrf")[0].value);
+    console.log("Token :" + $("#csrf")[0].value);
     new Vue({
         el: '#vue-container',
         data: {
@@ -91,7 +93,8 @@
             password1: "",
             password2: "",
             email: "",
-            name: ""
+            name: "",
+            searching: false,
         },
         mounted: function () {
 
@@ -100,6 +103,7 @@
 
 
             validate: function () {
+                this.searching = true;
 
                 if ((!this.username) || (!this.password1) || (!this.password2) || (!this.email) || (!this.name)) {
                     Swal.fire({
@@ -108,7 +112,7 @@
                         icon: 'warning',
                         confirmButtonText: 'Okay'
                     });
-
+                    this.searching = false;
                     return false;
                 }
 
@@ -120,6 +124,7 @@
                         confirmButtonText: 'Got It!'
                     });
 
+                    this.searching = false;
                     return false;
                 }
                 this.send();
@@ -138,8 +143,42 @@
                 console.log(data);
                 this.$http.post("/users/", data).then(function (request) {
                     console.log(request);
+                    this.searching = false;
+
+
+                    Swal.fire({
+                        title: 'Registered!',
+                        text: "You will be redirected to the login page",
+                        icon: 'success',
+                        confirmButtonText: 'Got It!'
+                    });
+                    window.setInterval(function () {
+
+                        location = "/login"
+                    }, 3000);
+
                 }, function (error) {
                     console.log(error);
+                    this.searching = false;
+                    if (error.body != null) {
+                        Swal.fire({
+                            title: 'Ujumm',
+                            text: error.body.errors[0].defaultMessage,
+                            icon: 'warning',
+                            confirmButtonText: 'Got It!'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Ujumm',
+                            text: error.bodyText,
+                            icon: 'warning',
+                            confirmButtonText: 'Got It!'
+                        });
+                    }
+
+
+
+
                 });
 
             }
