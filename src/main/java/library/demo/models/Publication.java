@@ -1,6 +1,9 @@
 package library.demo.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +11,14 @@ import java.util.List;
 @Entity
 @Table(name = "publication")
 public class Publication {
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username")
+    @JsonManagedReference
     User user;
+
+
     @Id
     private int id;
 
@@ -24,6 +32,7 @@ public class Publication {
 
     @OneToOne
     @JoinColumn(name = "file")
+    @JsonManagedReference
     private File file;
 
     @Column
@@ -32,6 +41,7 @@ public class Publication {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cover")
+    @JsonManagedReference
     private File cover;
 
 
@@ -56,9 +66,11 @@ public class Publication {
     private int visits;
 
     @OneToMany(mappedBy = "publication", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Comment> comments = new ArrayList<>(0);
 
-    @OneToMany(mappedBy = "publication", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Like> likes = new ArrayList<>(0);
 
     public User getUser() {

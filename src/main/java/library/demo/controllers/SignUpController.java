@@ -45,6 +45,7 @@ public class SignUpController {
             return new ResponseEntity<String>("Email already tanken", HttpStatus.BAD_REQUEST);
 
         }
+        username.setEnable(true);
         userRepository.save(username);
 
         return new ResponseEntity<String>(username.toString(), HttpStatus.OK);

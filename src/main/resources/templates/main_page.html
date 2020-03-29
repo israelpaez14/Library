@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th=”http://www.thymeleaf.org”
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+>
 <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
@@ -8,9 +8,88 @@
     <div th:replace="layout::header"></div>
 </head>
 <body>
-<div th:replace="layout::navbar"></div>
+<div th:replace="layout::navbar">
+</div>
 
 
+<div class="container" style="margin-top: 5vh" id="vue-container">
+    <div v-if="searching" class="loading">Loading</div>
+    <input type="hidden" th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}" id="csrf"/>
 
+    <h1>Most Popular publications</h1>
+
+    <div v-for="publication in publications">
+
+
+        <div class="card border-primary col-md-12">
+            <div class="card-header">Shared by: {{publication.user.userName}}<img src="images/user.png"
+                                                                                  width="20"
+                                                                                  height="20">-{{publication
+                .shareDate}}
+            </div>
+            <div class="card-body">
+                <h2 class="card-title">{{publication.title}}</h2>
+                <p class="card-text">
+                    <b>Author:</b>{{publication.author}}<br>
+                    <b>Type:</b>{{publication.type}}<img src="images/book2.png" width="20"
+                                                         height="20"><br>
+                    <b>Stars:</b>{{publication.stars}}<img src="images/star.png" width="20"
+                                                           height="20"><br>
+                    <b>Visits:</b>{{publication.visits}}<img src="images/see.png" width="20"
+                                                             height="20"><br>
+
+                </p>
+                <a class="btn btn-success" :href="'publications/visit/'+publication.id">Visit!</a>
+            </div>
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script type="text/javascript">
+
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $("#csrf")[0].value;
+    console.log("Token :" + $("#csrf")[0].value);
+    new Vue({
+        el: '#vue-container',
+        data: {
+            searching: true,
+            publications: [],
+        },
+        mounted: function () {
+            this.loadPublications();
+        },
+        methods: {
+
+            loadPublications: function () {
+
+                let success = function (response) {
+                    console.log(response);
+                    this.publications = response.body;
+
+                    this.searching = false;
+                };
+
+                let error = function (error) {
+                    console.log(error);
+                    this.searching = false;
+                };
+                this.$http.get("/publication/list").then(success, error);
+            }
+
+
+        }
+    });
+
+</script>
 </body>
 </html>

@@ -1,15 +1,12 @@
 package library.demo.models;
 
-import library.demo.models.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
 import javax.validation.constraints.Email;
-import java.lang.annotation.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "library")
+@JsonIgnoreProperties({"comments","publications","likes"})
 public class User {
 
     @Id
@@ -24,6 +22,8 @@ public class User {
     private String userName;
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @JsonIgnore
     @Column(name = "password", nullable = false, length = 100)
     private String password;
     @Column(name = "enable", nullable = false)
@@ -31,15 +31,21 @@ public class User {
 
     @Email
     @Column
-   // @UniqueEmailConstraint
     private String email;
 
+     @JsonBackReference(value = "comments")
+    //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToMany(mappedBy = "username", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
+
+    @JsonBackReference(value = "publications")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private List<Publication> publications = new ArrayList<>(0);
+
+    @JsonBackReference(value = "likes")
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Like> likes = new ArrayList<>(0);
 
@@ -76,10 +82,12 @@ public class User {
         this.name = name;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty(value = "password")
     public void setPassword(String password) {
         this.password = password;
     }
