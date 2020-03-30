@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th=”http://www.thymeleaf.org”
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <link rel="icon" href="images/book.png" type="image/png">
+    <div th:replace="layout::header"></div>
+</head>
+<body>
+<div th:replace="layout::navbar">
+</div>
+
+
+<div class="container" style="margin-top: 5vh" id="vue-container">
+    <div v-if="searching" class="loading">Loading</div>
+    <input type="hidden" th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}" id="csrf"/>
+
+    <h1 th:text="${publication.title}">Titulo</h1>
+
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script type="text/javascript">
+
+    Vue.http.headers.common['X-CSRF-TOKEN'] = $("#csrf")[0].value;
+    console.log("Token :" + $("#csrf")[0].value);
+    new Vue({
+        el: '#vue-container',
+        data: {
+            searching: false,
+
+        },
+        mounted: function () {
+
+        },
+        methods: {
+
+
+        }
+    });
+
+</script>
+</body>
+</html>

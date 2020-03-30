@@ -1,9 +1,13 @@
 package library.demo.models;
 
+import com.fasterxml.jackson.annotation.*;
+import net.minidev.json.annotate.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "file")
+@JsonIgnoreProperties("path")
 public class File {
 
     @Id
@@ -14,6 +18,7 @@ public class File {
     @Column(name = "filename")
     private String fileName;
 
+    @JsonIgnore
     @Column(name = "path")
     private String path;
 
@@ -27,11 +32,16 @@ public class File {
     private String upload_date;
 
 
-    @OneToOne(mappedBy = "file", cascade = CascadeType.DETACH)
+    @JsonBackReference
+    @OneToOne(mappedBy = "file", cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+
     private Publication publication;
 
 
-    @OneToOne(mappedBy = "cover", cascade = CascadeType.DETACH)
+
+    @JsonBackReference
+    @OneToOne(mappedBy = "cover", cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
+
     private Publication publicationCover;
 
     public File() {
