@@ -3,8 +3,8 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Main Page</title>
-    <link rel="icon" href="images/book.png" type="image/png">
+    <title>My profile</title>
+    <link rel="icon" href="/images/book.png" type="image/png">
     <div th:replace="layout::header"></div>
 </head>
 <body>
@@ -16,11 +16,123 @@
     <div v-if="searching" class="loading">Loading</div>
     <input type="hidden" th:name="${_csrf.parameterName}"
            th:value="${_csrf.token}" id="csrf"/>
+    <div class="row">
 
-    <h1 th:text="${user.name}">Titulo</h1>
+        <div class="col-md-4">
+            <h1 th:text="${user.name}">Titulo</h1>
 
-    <img src="/images/user.png" style="width: 25%; height: 45vh;">
+            <img src="/images/user.png" style="width: 100%; height: 45vh;">
 
+            <div th:if="${authenticatedUser.username==user.userName}">
+                <div class="alert alert-dismissible alert-primary" style="text-align: center">
+                     <a href="#" class="alert-link"  data-toggle="modal"
+                        data-target="#profilePictureModal">Change profile picture</a>
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="profilePictureModal" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Upload a new
+                                    profile picture</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <label>Profile picture</label>
+                                    <input type="file" name="profilePicture" id="profilePicture">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div>
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#profile">Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#friends">Friends</a>
+                    </li>
+                </ul>
+
+
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade show active" style="padding-top: 5vh" id="home">
+                        <h1>Publications</h1>
+
+                        <div v-for="publication in publications">
+                            <div class="card border-primary col-md-12">
+                                <div class="card-header">
+                                    <img src="/images/user.png"
+                                         width="20"
+                                         height="20">-{{publication .shareDate}}
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-title">{{publication.title}}</h2>
+                                    <p class="card-text">
+                                        <b>Author:</b>{{publication.author}}<br>
+                                        <b>Type:</b>{{publication.type}}<img src="/images/book2.png"
+                                                                             width="20"
+                                                                             height="20"><br>
+                                        <b>Stars:</b>{{publication.stars}}<img
+                                            src="/images/star.png"
+                                            width="20"
+                                            height="20"><br>
+                                        <b>Visits:</b>{{publication.visits}}<img
+                                            src="/images/see.png" width="20"
+                                            height="20"><br>
+
+                                    </p>
+                                    <a class="btn btn-success"
+                                       :href="'/publications/visit/'+publication.id">Visit!</a>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                    <div class="tab-pane fade" id="profile">
+                        <p>
+                            Name: [[${user.name}]]<br>
+                            Email: [[${{user.email}}]]<br>
+                            Publications count: {{publications.length}}<br>
+                            Visits:{{visits}}<br>
+                            Stars Average:{{starsAverage}}
+
+                        </p>
+                    </div>
+                    <div class="tab-pane fade" id="friends">
+                        <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out
+                            mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.
+                            Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard
+                            locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR
+                            banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
 
 
 </div>
@@ -38,13 +150,32 @@
         el: '#vue-container',
         data: {
             searching: false,
+            user: "[[${user.userName}]]",
+            publications: [],
+            visits:0,
+            starsAverage:0
 
         },
         mounted: function () {
-
+            this.loadUserPublications();
         },
         methods: {
-
+            loadUserPublications: function () {
+                let success = function (response) {
+                    console.log(response);
+                    this.publications = response.body;
+                    let starAverage = 0;
+                    this.publications.forEach(publication=>{
+                        this.visits += publication.visits;
+                        starAverage += publication.stars;
+                    });
+                    this.starsAverage = starAverage/this.publications.length;
+                };
+                let error = function (error) {
+                    console.log(error);
+                };
+                this.$http.get("/publication/by_user/" + this.user).then(success, error);
+            }
 
         }
     });
