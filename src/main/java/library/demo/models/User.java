@@ -33,7 +33,10 @@ public class User {
     @Column
     private String email;
 
-     @JsonBackReference(value = "comments")
+    @Column(name = "profile_picture")
+    private  String profilePicture;
+
+    @JsonBackReference(value = "comments")
     //@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToMany(mappedBy = "username", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
@@ -123,6 +126,16 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
 
     @Override
     public String toString() {

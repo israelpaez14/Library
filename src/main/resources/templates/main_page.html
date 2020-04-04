@@ -22,10 +22,12 @@
     <div v-for="publication in publications">
 
 
-        <div class="card border-primary col-md-12">
-            <div class="card-header">Shared by: {{publication.user.userName}}<img src="images/user.png"
-                                                                                  width="20"
-                                                                                  height="20">-{{publication
+        <div class="card border-primary col-md-12" style="margin-bottom: 5vh">
+            <div class="card-header">Shared by:<a
+                    :href="'/profile/view/'+publication.user.userName">{{publication.user.userName}}</a><img
+                    src="images/user.png"
+                    width="20"
+                    height="20">-{{publication
                 .shareDate}}
             </div>
             <div class="card-body">
