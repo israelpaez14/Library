@@ -24,8 +24,9 @@
 
         <div class="card border-primary col-md-12" style="margin-bottom: 5vh">
             <div class="card-header">Shared by:<a
-                    :href="'/profile/view/'+publication.user.userName">{{publication.user.userName}}</a><img
-                    src="images/user.png"
+                    :href="'/profile/view/'+publication.user.userName">{{publication.user
+                .userName}}</a><img
+                    :src="'/uploaded_file/view/'+publication.user.profilePicture"
                     width="20"
                     height="20">-{{publication
                 .shareDate}}
