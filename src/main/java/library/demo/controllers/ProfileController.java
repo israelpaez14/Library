@@ -1,10 +1,12 @@
 package library.demo.controllers;
 
-import library.demo.configuration.FileNamingService;
+import library.demo.services.FileNamingService;
 import library.demo.models.User;
 import library.demo.models.repositories.UserRepository;
+import library.demo.services.UploadedFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -25,8 +27,9 @@ public class ProfileController {
     @Autowired
     UserRepository userRepository;
 
+
     @Autowired
-    FileNamingService fileNamingService;
+    UploadedFileService uploadedFileService;
 
 
     @RequestMapping("/view")
@@ -55,21 +58,19 @@ public class ProfileController {
 
 
     @RequestMapping(value = "/picture", method = RequestMethod.POST)
-    public String changeProfilePicture(@RequestParam MultipartFile profilePicture,
-                                       HttpServletRequest request, Authentication authentication) throws IOException {
-        String uploadsFile = "";
-        String realPath = "/tmp/uploads/";
+    public ResponseEntity<String> changeProfilePicture(@RequestParam MultipartFile profilePicture,
+                                               HttpServletRequest request, Authentication authentication) throws IOException {
         if(!profilePicture.getContentType().contains("image")){
-            return "redirect:../other";
+            return ResponseEntity.badRequest().body("Not valid image format");
         }
-        String savedFileName =
-                fileNamingService.getValidName("."+profilePicture.getContentType().split("/")[1]);
-        File transferFile = new File(realPath + "/" + savedFileName);
+        String uploadedName = uploadedFileService.uploadFile(profilePicture);
+        if(uploadedName.equals("")){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while " +
+                    "uploading file");
+        }
         User user = userRepository.findById(((UserDetails) authentication.getPrincipal()).getUsername()).get();
-        user.setProfilePicture(transferFile.getName());
+        user.setProfilePicture(uploadedName);
         userRepository.save(user);
-        profilePicture.transferTo(transferFile);
-
-        return "redirect:view";
+        return ResponseEntity.ok().body("File uploaded");
     }
 }

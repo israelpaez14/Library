@@ -1,9 +1,9 @@
-package library.demo.configuration;
+package library.demo.services;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class FileNamingService {
+public class RandomFileNamingService implements FileNamingService{
 
     public String getValidName(String fileExtension){
         String chars = "abcdefghijklmnopqrstuvwxyz1234567890";
