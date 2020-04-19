@@ -2,6 +2,7 @@ package library.demo.controllers;
 
 import library.demo.models.Publication;
 import library.demo.models.repositories.PublicationRepository;
+import library.demo.models.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,9 @@ public class PublicationContoller {
                     HttpStatus.NOT_FOUND, "entity not found"
             );
         }else{
+            Publication publication = (Publication) optionalPublication.get();
+            publication.setVisits(publication.getVisits()+1);
+            publicationRepository.save(publication);
             model.addAttribute("publication",optionalPublication.get());
 
         }

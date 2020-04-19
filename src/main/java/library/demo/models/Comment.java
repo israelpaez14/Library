@@ -1,5 +1,7 @@
 package library.demo.models;
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "comments")
@@ -15,6 +17,8 @@ public class Comment {
     private Publication publication;
 
     @Column
+    @Min(value = 2)
+    @Max(value = 200)
     private String content;
 
     @Column(name = "publish_date")

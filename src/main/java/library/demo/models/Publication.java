@@ -18,14 +18,11 @@ public class Publication {
     @JsonManagedReference
     User user;
 
-
     @Id
     private int id;
 
-
     @Column
     private String type;
-
 
     @Column(name = "share_date")
     private String shareDate;
