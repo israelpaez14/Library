@@ -1,7 +1,11 @@
 package library.demo.models;
+import jdk.internal.jline.internal.Nullable;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Null;
 
 @Entity
 @Table(name = "comments")
@@ -9,7 +13,7 @@ public class Comment {
 
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne
@@ -17,11 +21,10 @@ public class Comment {
     private Publication publication;
 
     @Column
-    @Min(value = 2)
-    @Max(value = 200)
+    @Length(max = 500,min = 2)
     private String content;
 
-    @Column(name = "publish_date")
+    @Column(name = "publish_date", updatable = false,insertable = false)
     private String publishDate;
 
     @Column

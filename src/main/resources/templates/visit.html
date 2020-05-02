@@ -161,16 +161,38 @@
                 console.log(this.comment);
 
                 let success = function (response) {
-                    console.log(response)
+                    Swal.fire({
+                        title: 'Published!',
+                        text: 'Your comment has been published',
+                        icon: 'success',
+                        confirmButtonText: 'Got It!'
+                    });
+                    window.setInterval(function () {
+                        location = "/publications/visit/"+[[${publication.id}]];
+                    },2000);
                 };
 
                 let error = function (error) {
                     console.log(error)
 
+                    if (error.status===500){
+                        Swal.fire({
+                            title: 'uhmmm',
+                            text: 'Something went wrong :/, Try later',
+                            icon: 'error',
+                            confirmButtonText: 'Got It!'
+                        });
+                    }
+
+                    if(error.status ===400){
+                        Swal.fire({
+                            title: 'uhmmm',
+                            text: 'The comments must have 2 chars at least',
+                            icon: 'warning',
+                            confirmButtonText: 'Got It!'
+                        });
+                    }
                 };
-
-
-
                 let formData = new FormData();
                 formData.append("publication", [[${publication.id}]]);
                 formData.append("content", this.comment);
