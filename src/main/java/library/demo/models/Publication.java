@@ -197,8 +197,6 @@ public class Publication {
                 ", author='" + author + '\'' +
                 ", overview='" + overview + '\'' +
                 ", stars=" + stars +
-                ", visits=" + visits +
-                ", comments=" + comments +
-                '}';
+                ", visits=" + visits + "}";
     }
 }
